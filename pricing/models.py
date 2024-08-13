@@ -18,14 +18,29 @@ class SeasonalProduct(Product):
         return self.base_price * (1 - self.season_discount_percentage / 100)
 
 
+
 class BulkProduct(Product):
     bulk_discount_threshold  = models.IntegerField()
     bulk_discount_percentage = models.FloatField()
 
-    def get_price(self, quantity):
+    def get_price(self, quantity=1):  # Default argument for quantity
         if quantity >= self.bulk_discount_threshold:
             return self.base_price * (1 - self.bulk_discount_percentage / 100)
         return self.base_price
+
+# class BulkProduct(Product):
+#     bulk_discount_threshold  = models.IntegerField()
+#     bulk_discount_percentage = models.FloatField()
+    
+#     def get_price(self, quantity):  # Default quantity to 1 if not provided
+#         if quantity >= self.bulk_discount_threshold:
+#             return self.base_price * (1 - self.bulk_discount_percentage / 100)
+#         return self.base_price
+
+    # def get_price(self, quantity):
+    #     if quantity >= self.bulk_discount_threshold:
+    #         return self.base_price * (1 - self.bulk_discount_percentage / 100)
+    #     return self.base_price
 
 
 class Discount(models.Model):
@@ -44,7 +59,6 @@ class PercentageDiscount(Discount):
     def apply_discount(self, price):
         return price * (1 - self.percentage / 100)
 
-
 class FixedAmountDiscount(Discount):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
 
@@ -52,13 +66,18 @@ class FixedAmountDiscount(Discount):
         return max(0, price - self.amount)
 
 
+
+
 class Order(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    discount = models.ForeignKey(Discount, on_delete=models.SET_NULL, null=True, blank=True)
-    quantity = models.IntegerField(default=1)
+    product   = models.ForeignKey(Product, on_delete=models.CASCADE)
+    discount  = models.ForeignKey(Discount, on_delete=models.SET_NULL, null=True, blank=True)
+    quantity  = models.IntegerField(default=1)
 
     def calculate_total(self):
-        base_price = self.product.get_price(self.quantity) if isinstance(self.product, BulkProduct) else self.product.get_price()
+        if isinstance(self.product, BulkProduct):
+            base_price = self.product.get_price(self.quantity)  # Pass quantity
+        else:
+            base_price = self.product.get_price()  # No quantity needed
         if self.discount:
             total_price = self.discount.apply_discount(base_price)
         else:
@@ -69,9 +88,12 @@ class Order(models.Model):
         return f"Order of {self.quantity} x {self.product.name}"
 
 
+
+
+
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    order    = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
+    product  = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
 
     def get_total_price(self):

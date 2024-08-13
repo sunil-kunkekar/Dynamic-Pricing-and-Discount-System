@@ -3,7 +3,7 @@ from pricing.models import Product, SeasonalProduct, BulkProduct, Discount, Perc
 
 # Admin class for Product to handle common settings
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'base_price')
+    list_display = ('id','name', 'base_price')
     search_fields = ('name',)
     ordering = ('name',)
 
@@ -40,3 +40,32 @@ class FixedAmountDiscountAdmin(DiscountAdmin):
     search_fields = DiscountAdmin.search_fields + ('amount',)
 
 admin.site.register(FixedAmountDiscount, FixedAmountDiscountAdmin)
+
+
+
+
+
+# class OrderAdmin(admin.ModelAdmin):
+#     list_display = ('id','product', 'quantity', 'discount', 'calculate_total')
+#     search_fields = ('product__name',)
+    
+#     def get_queryset(self, request):
+#         # Customize queryset to include related discount information
+#         return super().get_queryset(request).select_related('product', 'discount')
+
+#     def calculate_total(self, obj):
+#         return obj.calculate_total()
+
+admin.site.register(Order)
+
+
+# class OrderItemAdmin(admin.ModelAdmin):
+#     list_display  = ('id','order', 'product', 'quantity', 'get_total_price')
+#     list_filter   = ('order', 'product')
+#     search_fields = ('order__product__name', 'product__name')
+
+#     def get_total_price(self, obj):
+#         return obj.get_total_price()
+#     get_total_price.short_description = 'Total Price'
+    
+admin.site.register(OrderItem)
