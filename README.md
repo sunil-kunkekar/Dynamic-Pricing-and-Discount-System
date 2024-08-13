@@ -27,7 +27,7 @@ Django REST Framework 3.15.2
 DB : SQlit3 
 pip (Python package installer)- pip 24.2
 
-git clone https://github.com/yourusername/dynamic_pricing_system.git
+git clone https://github.com/sunil-kunkekar/Dynamic-Pricing-and-Discount-System.git
 cd dynamic_pricing_system
 
 
