@@ -7,6 +7,6 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     ordering = ('name',)
 
-
+ 
 admin.site.register(Product, ProductAdmin)
 
