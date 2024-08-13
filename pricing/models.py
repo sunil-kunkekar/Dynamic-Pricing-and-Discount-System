@@ -53,6 +53,9 @@ class Discount(models.Model):
         return self.name
 
 
+
+
+
 class PercentageDiscount(Discount):
     percentage = models.FloatField()
 

@@ -49,48 +49,79 @@ class FixedAmountDiscountSerializer(DiscountSerializer):
         fields = DiscountSerializer.Meta.fields + ('amount',)
         
 
-
-#oRDER
-# class OrderSerializer(serializers.ModelSerializer):
-#     product  = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
-#     discount = serializers.PrimaryKeyRelatedField(queryset=Discount.objects.all(), required=False, allow_null=True)
-#     quantity = serializers.IntegerField()
-
-#     class Meta:
-#         model = Order
-#         fields = ('id', 'product', 'discount', 'quantity', 'calculate_total')
-
-#     def get_calculate_total(self, obj):
-#         return obj.calculate_total()
-
-
-
 class OrderSerializer(serializers.ModelSerializer):
+    product     = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
+    discount    = serializers.PrimaryKeyRelatedField(queryset=Discount.objects.all(), allow_null=True)
     total_price = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
-        fields = ['id','product', 'discount', 'quantity', 'total_price']
+        fields = ['id', 'product', 'discount', 'quantity', 'total_price']
 
     def get_total_price(self, obj):
         return obj.calculate_total()
 
-    def validate_discount(self, value):
-        if value is not None and not isinstance(value, (PercentageDiscount, FixedAmountDiscount)):
-            raise serializers.ValidationError("Discount must be a valid subclass like PercentageDiscount or FixedAmountDiscount.")
-        return value
-
-
-
-
 class OrderItemSerializer(serializers.ModelSerializer):
-    order     = serializers.PrimaryKeyRelatedField(queryset=Order.objects.all())
-    product   = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
-    quantity  = serializers.IntegerField()
+    product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
+    order   = serializers.PrimaryKeyRelatedField(queryset=Order.objects.all())
 
     class Meta:
-        model = OrderItem
-        fields = ('id', 'order', 'product', 'quantity', 'get_total_price')
+        model  = OrderItem
+        fields = ['id', 'order', 'product', 'quantity', 'get_total_price']
 
-    def get_get_total_price(self, obj):
+    def get_total_price(self, obj):
         return obj.get_total_price()
+
+
+# class OrderSerializer(serializers.ModelSerializer):
+#     product     = ProductSerializer()
+#     discount    = DiscountSerializer(allow_null=True)
+#     total_price = serializers.SerializerMethodField()
+
+#     class Meta:
+#         model = Order
+#         fields = ['id', 'product', 'discount', 'quantity', 'total_price']
+
+#     def get_total_price(self, obj):
+#         return obj.calculate_total()
+
+# class OrderItemSerializer(serializers.ModelSerializer):
+#     product  = ProductSerializer()
+#     order    = OrderSerializer()
+
+#     class Meta:
+#         model = OrderItem
+#         fields = ['id', 'order', 'product', 'quantity', 'get_total_price']
+
+#     def get_total_price(self, obj):
+#         return obj.get_total_price()
+
+# class OrderSerializer(serializers.ModelSerializer):
+#     total_price = serializers.SerializerMethodField()
+
+#     class Meta:
+#         model = Order
+#         fields = ['id','product', 'discount', 'quantity', 'total_price']
+
+#     def get_total_price(self, obj):
+#         return obj.calculate_total()
+
+#     def validate_discount(self, value):
+#         if value is not None and not isinstance(value, (PercentageDiscount, FixedAmountDiscount)):
+#             raise serializers.ValidationError("Discount must be a valid subclass like PercentageDiscount or FixedAmountDiscount.")
+#         return value
+
+
+
+
+# class OrderItemSerializer(serializers.ModelSerializer):
+#     order     = serializers.PrimaryKeyRelatedField(queryset=Order.objects.all())
+#     product   = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
+#     quantity  = serializers.IntegerField()
+
+#     class Meta:
+#         model = OrderItem
+#         fields = ('id', 'order', 'product', 'quantity', 'get_total_price')
+
+#     def get_get_total_price(self, obj):
+#         return obj.get_total_price()

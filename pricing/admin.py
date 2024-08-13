@@ -69,3 +69,4 @@ admin.site.register(Order)
 #     get_total_price.short_description = 'Total Price'
     
 admin.site.register(OrderItem)
+
