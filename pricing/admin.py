@@ -15,3 +15,22 @@ class SeasonalProductAdmin(ProductAdmin):
     search_fields = ProductAdmin.search_fields + ('season_discount_percentage',)
     
 admin.site.register(SeasonalProduct, SeasonalProductAdmin)
+
+
+class BulkProductAdmin(ProductAdmin):
+    list_display  = ProductAdmin.list_display + ('bulk_discount_threshold', 'bulk_discount_percentage')
+    search_fields = ProductAdmin.search_fields + ('bulk_discount_threshold', 'bulk_discount_percentage')
+    
+admin.site.register(BulkProduct, BulkProductAdmin)
+
+class DiscountAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)
+
+admin.site.register(Discount, DiscountAdmin)
+
+class PercentageDiscountAdmin(DiscountAdmin):
+    list_display = DiscountAdmin.list_display + ('percentage',)
+    search_fields = DiscountAdmin.search_fields + ('percentage',)
+    
+admin.site.register(PercentageDiscount, PercentageDiscountAdmin)
