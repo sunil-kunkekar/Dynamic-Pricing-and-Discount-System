@@ -7,14 +7,16 @@ class Product(models.Model):
     def get_price(self):
         return self.base_price
 
-    class Meta:
-        abstract = True
+    def __str__(self):
+        return self.name
+
 
 class SeasonalProduct(Product):
     season_discount_percentage = models.FloatField()
 
     def get_price(self):
         return self.base_price * (1 - self.season_discount_percentage / 100)
+
 
 class BulkProduct(Product):
     bulk_discount_threshold  = models.IntegerField()
@@ -25,14 +27,16 @@ class BulkProduct(Product):
             return self.base_price * (1 - self.bulk_discount_percentage / 100)
         return self.base_price
 
+
 class Discount(models.Model):
     name = models.CharField(max_length=255)
 
     def apply_discount(self, price):
         raise NotImplementedError("Subclasses must implement this method")
 
-    class Meta:
-        abstract = True
+    def __str__(self):
+        return self.name
+
 
 class PercentageDiscount(Discount):
     percentage = models.FloatField()
@@ -40,8 +44,35 @@ class PercentageDiscount(Discount):
     def apply_discount(self, price):
         return price * (1 - self.percentage / 100)
 
+
 class FixedAmountDiscount(Discount):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
 
     def apply_discount(self, price):
         return max(0, price - self.amount)
+
+
+class Order(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    discount = models.ForeignKey(Discount, on_delete=models.SET_NULL, null=True, blank=True)
+    quantity = models.IntegerField(default=1)
+
+    def calculate_total(self):
+        base_price = self.product.get_price(self.quantity) if isinstance(self.product, BulkProduct) else self.product.get_price()
+        if self.discount:
+            total_price = self.discount.apply_discount(base_price)
+        else:
+            total_price = base_price
+        return total_price
+
+    def __str__(self):
+        return f"Order of {self.quantity} x {self.product.name}"
+
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+
+    def get_total_price(self):
+        return self.product.get_price(self.quantity)
