@@ -10,3 +10,8 @@ class ProductAdmin(admin.ModelAdmin):
  
 admin.site.register(Product, ProductAdmin)
 
+class SeasonalProductAdmin(ProductAdmin):
+    list_display = ProductAdmin.list_display + ('season_discount_percentage',)
+    search_fields = ProductAdmin.search_fields + ('season_discount_percentage',)
+    
+admin.site.register(SeasonalProduct, SeasonalProductAdmin)
