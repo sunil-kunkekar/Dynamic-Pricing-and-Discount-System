@@ -34,3 +34,9 @@ class PercentageDiscountAdmin(DiscountAdmin):
     search_fields = DiscountAdmin.search_fields + ('percentage',)
     
 admin.site.register(PercentageDiscount, PercentageDiscountAdmin)
+
+class FixedAmountDiscountAdmin(DiscountAdmin):
+    list_display = DiscountAdmin.list_display + ('amount',)
+    search_fields = DiscountAdmin.search_fields + ('amount',)
+
+admin.site.register(FixedAmountDiscount, FixedAmountDiscountAdmin)

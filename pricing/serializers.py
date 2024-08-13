@@ -39,3 +39,12 @@ class PercentageDiscountSerializer(DiscountSerializer):
     class Meta(DiscountSerializer.Meta):
         model = PercentageDiscount
         fields = DiscountSerializer.Meta.fields + ('percentage',)
+        
+        
+class FixedAmountDiscountSerializer(DiscountSerializer):
+    amount = serializers.DecimalField(max_digits=10, decimal_places=2)
+
+    class Meta(DiscountSerializer.Meta):
+        model = FixedAmountDiscount
+        fields = DiscountSerializer.Meta.fields + ('amount',)
+        

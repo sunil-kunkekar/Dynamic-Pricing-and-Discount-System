@@ -16,9 +16,14 @@ class BulkProductViewSet(viewsets.ModelViewSet):
     
     
 class DiscountViewSet(viewsets.ModelViewSet):
-    queryset = Discount.objects.all()
+    queryset         = Discount.objects.all()
     serializer_class = DiscountSerializer
 
 class PercentageDiscountViewSet(viewsets.ModelViewSet):
-    queryset = PercentageDiscount.objects.all()
+    queryset         = PercentageDiscount.objects.all()
     serializer_class = PercentageDiscountSerializer
+    
+    
+class FixedAmountDiscountViewSet(viewsets.ModelViewSet):
+    queryset         = FixedAmountDiscount.objects.all()
+    serializer_class = FixedAmountDiscountSerializer
